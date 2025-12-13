@@ -45,8 +45,6 @@ library(flextable)
 library(ggeffects) #for simple effects graphs
 library(patchwork) #for pulling together forest plots as desired 
 
-
-
 #load in the functions
 source("script/processing_scripts/helper_functions.R")
 

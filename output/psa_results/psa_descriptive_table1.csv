@@ -1,0 +1,9 @@
+Table 1,,,,,
+Descriptive statistics by study,,,,,
+Variable,Study 1,Study 2,test(df),Statistic,p
+Age,30.34 (3.61),29.42 (3.98),t(468),2.65,.008
+Relationship Length,8.48 (4.30),7.47 (4.57),t(472),2.48,.013
+Cohabiting w/Partner,88.80%,78.50%,z,3.08,.002
+Has Child ,47.40%,39.10%,z,1.85,.064
+Has Child w/Current Partner,45.80%,37.30%,z,1.89,.059
+Note.,,,,,

@@ -1,0 +1,10 @@
+"","scale","RkF","R1R","RkR","Rc","RkRn","Rcn"
+"EPsex","EPsex",NA,NA,NA,NA,0.98,0.83
+"EPattract","EPattract",0.99,0.41,0.96,0.86,0.96,0.85
+"EPinterest","EPinterest",0.99,0.58,0.98,0.44,0.98,0.06
+"IPinit","IPinit",NA,NA,NA,NA,0.93,0.86
+"IPattract","IPattract",1,0.49,0.97,0.88,0.97,0.82
+"IPinterest","IPinterest",0.97,0.36,0.95,0.52,0.95,0.21
+"sex_freq","sex_freq",NA,NA,NA,NA,0.95,0.86
+"part_init","part_init",NA,NA,NA,NA,0.94,0.86
+"self_reject","self_reject",NA,NA,NA,NA,0.83,0.87

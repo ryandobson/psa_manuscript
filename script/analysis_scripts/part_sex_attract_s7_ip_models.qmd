@@ -1,0 +1,117 @@
+---
+title: "Supplemental Online Materials (S7): Summary of Models for In-Pair Interest, General Sexaul Interest, and more"
+author: ""
+date: 2025-11-14 #date of initial start (Y, M, D)
+format: 
+  # html:
+  #     code-fold: true #allows the code to be collapsed
+  #     embed-resources: true #for html documents to save with formatting
+  #     output-file: s3_raw_hormones_analyses.html
+    pdf:
+      toc: false #include table of contents
+      number-sections: true
+      mainfont: "Times New Roman"
+      monofont: "Courier New" #for console/code output
+      code-block-border-left: false
+      code-block-font-size: 0.9em
+      code-block-bg: true #remove grey background from codeblocks
+      code-overflow: wrap #enable wrapping of long lines
+      code-line-numbers: true
+      keep-tex: true
+      highlight-style: kate #turns off light-grey highlighting of code
+      pdf-engine: lualatex
+knitr: 
+  opts_chunk: 
+    comment: NA #"#>"
+    collapse: false #false for pdf 
+execute:
+  cache: true #this saves each code chunk so you don't need to re-run it. If you have chunks that depend upon each other this can be dangerous though. Use "dependson" 
+  echo: true #do I want to display the code chunk? 
+  results: true #do I want to display the output? 
+  include: true #do I want to include the code and code output? 
+  warning: false #do I want to display warnings from R about the analysis? 
+  eval: true #do I want to evaluate this chunk? 
+#params allow for rendering of specific chunks in output
+params:  
+  loading_data: 
+    value: true
+  functions:
+    value: true
+  
+---
+
+
+```{r}
+#| echo: false
+#| results: false
+#| cache: false
+
+rm(list = ls())
+
+# load in my file to easily link all of the relevant model image 
+image_links <- readRDS("../../output/psa_data_appendix_output/qmd_png_file_links.rds")
+#image_links
+image_links
+#source in my model lists to have selection vectors 
+source("part_sex_attract_model_list.R")
+
+#source in the unique helper function for printing models 
+source("../processing_scripts/helper_functions.R")
+
+```
+
+
+
+
+![](../../output/psa_results/psa_ip_fp1.png)
+
+
+
+```{r}
+#| results: 'asis'
+#| echo: false
+#| cache: false
+
+
+supplemental_sections2 <- list(
+  section_1 = list(m = c(ip[c(1:5, 7)]),
+                   title = "Exploratory analyses examining moderation effects on in-pair sexual interest"),
+  
+  section_2 = list(m = c(ip[c(8:10, 12:16)]),
+                   title = "Exploratory analyses examining moderation effects on general sexual desire, frequency of sex, partner-initiated sex, and rejection of partner-initiated sex")
+
+)
+
+for (i in seq_along(supplemental_sections2)) {
+
+  #extract section name 
+  sec_i_name <- names(supplemental_sections2[i])
+ 
+  #extract models 
+  models <- supplemental_sections2[[sec_i_name]]$m
+  
+  #extract title 
+  title <- supplemental_sections2[[sec_i_name]]$title
+  
+  section <- supplemental_sections2[[i]] #grab section 
+  models  <- section$m #grab model 
+  title   <- section$title #grab title 
+
+  
+  
+ cat(paste0("\n# Section 7.", i, " ", title, "\n\n"))
+  
+    for (m in models) {
+      cat(paste0("\n## Summary of model: ", m, "\n\n"))
+      get_model_imgs(m, image_links, render = TRUE)
+      
+      # Page break after each model (but skip after the last)
+      if (m != tail(models, 1)) cat("\n\n\\newpage\n\n")
+    }
+  
+}
+
+#get_model_imgs("S4_PRCPSMSy", image_links)
+
+```
+

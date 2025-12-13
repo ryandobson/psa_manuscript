@@ -1,0 +1,18 @@
+
+
+#large lmer model objects to ignore for git commit 
+*_FULL.rds
+*_FINAL.rds
+
+# R session files
+.Rhistory
+.RData
+.Ruserdata
+
+# Quarto / RMarkdown cache
+*_files/
+*_cache/
+
+# renv cache (you usually don't want this inside manuscript repo)
+renv/library/
+renv/staging/

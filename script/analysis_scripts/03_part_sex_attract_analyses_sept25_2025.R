@@ -24,9 +24,6 @@ rm(detachAllPackages)
 
 library(tidyverse)
 # library(labelled) #for spss labels 
-# #install.packages("remotes")
-#> Just rerun as updates are made: 
-remotes::install_github("ryandobson/codechest")
 library(codechest) #convenience functions 
 # library(haven)
 library(psych)
@@ -51,18 +48,161 @@ source("script/processing_scripts/helper_functions.R")
 #load in model list that specifies all of the models
 source("script/analysis_scripts/part_sex_attract_model_list.R")
 
-#> Read in dataframes 
-df <- readRDS("data/analysis_data/prolif_1_and_2_filtered.rds")
-df_study1 <- df[df$study == "Study 1", ] #equivalent to df %>% filter(Zstudy < 0)
-#creating a df where there is 1 row for each participant for some analyses 
-df_study2 <- df[df$study == "Study 2", ] #equivalent to df %>% filter(Zstudy < 0)
+
+#> Selecting variables for the present analysis for open data sharing ---------
+
+#> NOTE: The below code was commented out after it was run. 
+
+# # #> Read in original dataframe before filtering to variables to share 
+# df <- readRDS("data/analysis_data/prolif_1_and_2_filtered.rds")
+# # 
+# keep_variables <- c(
+# 
+#   # Identifiers / grouping
+#   "PROLIFIC_PID", #> NOTE: this variable was not anonymized until just prior to
+#   #sharing the data. Because of this, the variable name was used throughout the
+#   #code widely and it would have been a pain to update all of the code to make
+#   #that change. Thus, the solution was to overwrite this original variable name
+#   #with the anonymized version. The creation of the anonymized variable is documented
+#   #in the individual prolific 1 and prolific 2 files. 
+#   "study",
+#   "Zstudy",
+#   "studyday",
+# 
+#   # Menstrual / cycle variables
+#   "menses",
+#   "menses_lastentry",
+#   "menses_lastentrydate_1",
+# 
+#   # Sexual behavior outcomes
+#   "sex1",
+#   "sex2init",
+#   "sex3Pinit",
+#   "sex4reject",
+#   "Zsex1",
+#   "Zsex2init",
+#   "Zsex3Pinit",
+#   "Zsex4reject",
+# 
+#   # General sexual desire
+#   "IP1",
+#   "ZIP1",
+# 
+#   #> Extra-pair items
+#   "EP1", "EP2",
+# 
+#   # Extra-pair outcomes (modeled + components)
+#   "EPinterest",
+#   "EPattract",
+#   "ZEPinterest",
+#   "ZEPattract",
+#   "Zsextoday", #scenario item 
+# 
+#   #> In-pair items
+#   "IP2", "IP3",
+# 
+#   # In-pair outcomes (modeled + components)
+#   "IPinterest", 
+#   "IPattract",
+#   "ZIPinterest",
+#   "ZIPattract",
+# 
+#   # Probability of conception
+#   "prc_stirn_bc", #backward count 
+#   "prc_stirn_bctypical", #backward count typical day 
+#   "prc_stirn_fc", #forward count 
+#   "prc_stirn", #coalesced backward and forward count 
+#   "prc_stirn_mean", #between-woman variance 
+#   "prc_stirn_ww", #within-woman variance 
+#   "Zprc_stirn",  #Z-scored prc_stirn 
+#   "Zprc_stirn_ww", #Z-scored prc_stirn_ww
+#   "Zprc_stirn_mean", #Z-scored prc_stirn_mean
+# 
+#   # Estradiol  (log-transformed)
+#   "estr_b",
+#   "estr_bt",
+#   "estr_f",
+#   "estr",
+#   "estr_mean",
+#   "estr_ww",
+#   "Zestr_ww",
+#   "Zestr_mean",
+# 
+#   # Progesterone (log-transformed)
+#   "prog_b",
+#   "prog_bt",
+#   "prog_f",
+#   "prog",
+#   "prog_ww",
+#   "prog_mean",
+#   "Zprog_ww",
+#   "Zprog_mean",
+#   
+#   # Hormones (raw)
+#   "rawestr",
+#   "rawprog",
+#   "rawestr_ww",
+#   "rawprog_ww",
+#   "rawestr_mean",
+#   "rawprog_mean",
+#   "Zrawestr_ww",
+#   "Zrawprog_ww",
+#   "Zrawestr_mean",
+#   "Zrawprog_mean",
+# 
+#   # Sexual attractiveness (composites + simple effect probes)
+#   "p_sexattract", #partner sexual attractiveness
+#   "s_sexattract", #self sexual attractiveness
+#   "Zp_sexattract",
+#   "Zs_sexattract",
+#   "Zp_sexattract_p1", #centered at "plus 1" standard deviation from mean 
+#   "Zp_sexattract_m1", #centered at "minus 1" standard deviation below mean 
+#    
+#   #> 3 items for partner sexual attractiveness composite 
+#   "pattract1", "pattract2", "pattract3",
+#   #> 3 items for self sexual attractiveness composite 
+#   "sattract1", "sattract2", "sattract3"
+# 
+# 
+#   # Covariates (not included to ensure anonymity)
+# 
+#   # "age_1",
+#   # "rellength",
+#   # "lnrellength",
+#   # "livepart",
+#   # "children",
+#   # "children_current",
+#   # "children1"
+# 
+#   )
+# 
+# save_df <- df[, keep_variables]
+# 
+# 
+# # Save as CSV file
+# write.csv(save_df, file = "data/analysis_data/prolif_1_and_2_psa.csv", row.names = FALSE)
+# 
+# library(haven)
+# # Save as SAV file (requires haven package)
+# write_sav(save_df, path = "data/analysis_data/prolif_1_and_2_psa.sav")
+# 
+# # Save as RDS file
+# saveRDS(save_df, file = "data/analysis_data/prolif_1_and_2_psa.rds")
+# 
+# rm(save_df)
+
+#> Load open-sharing data file ----------
+
+df <- readRDS("data/analysis_data/prolif_1_and_2_psa.rds")
+
+
+df_study1 <- df[df$study == "Study 1", ]  
+df_study2 <- df[df$study == "Study 2", ] 
 #creating a df where there is 1 row for each participant for some analyses 
 dfp <- df[!duplicated(df$PROLIFIC_PID), ]
 
 
-#no people filtered out (i.e., contains women who reported going on birth control,
-# becoming pregenant, etc.)
-#df_all <- readRDS("data/analysis_data/prolif_1_and_2_full.rds")
+
 #> Renaming Vector and Scales ----------
 
 #> a renaming vector to ensure the resulting output has clean names 
@@ -406,7 +546,8 @@ for(i in seq_along(model_sets)) {
 
 
 #NOTE: If you don't have the models saved, you will have to un-comment the above
-#code and run it. 
+#code "psa_analysis(mdls, model_sets)" and run it. That will probably take at least
+#> 10 minutes to run. 
 
 # mep <- readRDS("output/data_appendix_output/ep_FULL.rds")
 # fmep <- readRDS("output/data_appendix_output/ep_FINAL.rds")
@@ -423,87 +564,12 @@ fmip <- readRDS("output/psa_data_appendix_output/ip_FINAL.rds")
 # mex <- readRDS("output/data_appendix_output/ex_FULL.rds")
 # fmex <- readRDS("output/data_appendix_output/ex_FINAL.rds")
 
-#> NOTE: 12/13/25: Some of the below information on model fit issues is outdated
-#> because I updated the fixed effects terms in the models (to include study interactions)
-#> and it actually resulted in less issues.  
-# for (i in seq_along(fmip)) {
-#   print(i)
-#   #print(isSingular(fmip[[i]]$post_mlm_comp_and_fed_model))
-# 
-#   print(fmip[[i]]$post_mlm_comp_and_fed_model@optinfo$conv$lme4)
-# }
-# fmip[[6]]
-# fmip[[11]]
-#> Models 6 and 11 had singularity issues, but their updated versions (7 and 12),
-#> which dropped problematic random slopes, had no issues. 
-#> Models 13 and 16 failed to converge but tolerances were close to the cutoff. 
-#> Will examine random effects and determine if anything is wonky and if I should
-#> try to refit a simpler model. 
 
 
-# 
-# S3_PRCPSMSy <- refit_model(fmip$S3_PRCPSMSy$post_mlm_comp_and_fed_model)
-# summary(S3_PRCPSMSy)
-# #> update the list
-# fmip$S3_PRCPSMSy$post_mlm_comp_and_fed_model <- S3_PRCPSMSy
-# 
-# S4_HPSMSy <- refit_model(fmip$S4_HPSMSy$post_mlm_comp_and_fed_model)
-# summary(S4_HPSMSy)
-# #> update the list
-# fmip$S4_HPSMSy$post_mlm_comp_and_fed_model <- S4_HPSMSy
+#> SINGLE MODEL SET EXAMPLE -- If you want to test out a single model, the below
+#> process can be done using a singular model from the mdls list. 
 
-#> Save updated file
-#saveRDS(fmip, paste0(data_appendix_directory, "ip_FINAL.rds"))
-
-
-
-#> These models are fine: 
-# fmip$IP_HPSMSy$post_mlm_comp_and_fed_model
-# fmip$IA_HPS$post_mlm_comp_and_fed_model
-# fmip$GN_HPSMSy$post_mlm_comp_and_fed_model
-# fmip$S3_HPSMSy$post_mlm_comp_and_fed_model
-# #summary(fmip$S4_HPSMSy$post_mlm_comp_and_fed_model) #converges with tolerance issue
-# #estra random slope can probably be dropped 
-# 
-# 
-# #models with convergence issues 
-# fmip$S2_HPS$post_mlm_comp_and_fed_model #intercept and estra slope r = 1
-# 
-# fS2_HPS <- formula(fmip$S2_HPS$post_mlm_comp_and_fed_model)
-# fS2_HPS <- update(fS2_HPS, . ~ . - (1 + Zestr_ww + Zprog_ww | PROLIFIC_PID) 
-#                   + (1 + Zprog_ww | PROLIFIC_PID))
-# 
-# summary(fmip$S2_HPS$post_mlm_comp_and_fed_model)
-# simplified_model <- lmer(fS2_HPS, data = df)
-# summary(simplified_model)
-# 
-# #add it back to the final model list 
-# fmip$S2_HPS$simplified_model <- simplified_model
-# 
-# summary(fmip$S1_HPSMSy$post_mlm_comp_and_fed_model)
-# isSingular(fmip$S1_HPSMSy$post_mlm_comp_and_fed_model)
-# #droping prog because its random slope variance is tiny 
-# fS1_HPSMYSy <- formula(fmip$S1_HPSMSy$post_mlm_comp_and_fed_model)
-# fS1_HPSMYSy <- update(fS1_HPSMYSy, . ~ . - (1 + Zestr_ww + Zprog_ww | PROLIFIC_PID)
-#                       + (1 + Zestr_ww | PROLIFIC_PID))
-# 
-# simplified_model <- lmer(fS1_HPSMYSy, data = df) 
-# summary(simplified_model)
-# 
-# #add it back to the final model list
-# fmip$S1_HPSMSy$simplified_model <- simplified_model 
-# 
-
-# 
-# #> Save the updated model list: 
-# saveRDS(fmip, paste0(data_appendix_directory, "ip_FINAL.rds"))
-
-
-
-
-#> SINGLE MODEL SET EXAMPLE
-
-# cm <- run_mlm_comparisons(cm)
+# cm <- run_mlm_comparisons(mdls[1])
 # 
 # cm <- run_fixed_effect_drops(
 #   model_list = cm, #make sure the model list referenced here is updated as needed
@@ -828,64 +894,6 @@ supplemental_sections2
 # print(ncm$Sex2_HPS$apa_mlm_report)
 # ncm$Sex2_HPS$mc$step02_final_model$model1
 # 
-# 
-# ncm$Sex2_HPS$apa_fed_report
-# ncm$Sex2_HPS$fed_menses
-# ncm$Sex2_HPS$fed_menses$s00_initial_model$model
-# #> Adding in the random slope for menses causes a singularity issue. 
-# #> The intercept variance and random slope for Zestr_ww become perfectly correlated 
-# ncm$Sex2_HPS$fed_menses$s01_edited_model$model
-# ncm$Sex2_HPS$fed_menses$s02_edited_model$model
-# ncm$Sex2_HPS$fed_menses$s03_final_model$model
-# 
-# #> This is a count variable. I am going to do a model with a count outcome to 
-# #> see if that changes anything. 
-# df$sex2init
-# 
-# sex2_form <- formula(ncm$Sex2_HPS$fed_menses$s03_final_model$model)
-# #update to the raw sex2init, rather than the Z score used in this model 
-# sex2_form <- update(sex2_form, sex2init ~ .)
-# sex2_form
-# 
-# #> This has no singularity issue but failes to converge pretty far away from the
-# #> tolerance level. 
-# #glmer(sex2_form, data = df, family = poisson(link = "log"))
-# sex2_form
-# 
-# library(glmmTMB) #for negative binomial 
-# 
-# summary(df$sex2init)
-# any(is.na(df$sex2init))           # Should only be genuine NAs
-# any(df$sex2init < 0, na.rm=TRUE)  # Should be FALSE
-# any(df$sex2init %% 1 != 0, na.rm=TRUE)  # Should be FALSE (integer check)
-# 
-# str(df$sex2init)
-# df$sex2init <- as.numeric(df$sex2init)
-# Sex2_HPS <- glmmTMB::glmmTMB(
-#   sex2_form,
-#   data = df,
-#   family = glmmTMB::nbinom2(link = "log")
-# )
-# summary(Sex2_HPS)
-# 
-# psych::describe(log1p(df$ZEPinterest))
-# 
-# df$ZLNEPinterest <- scale(log1p(df$EPinterest))[,1]
-# EP_f <- formula(cfm$EP_PRCPSMSy$post_mlm_comp_and_fed_model)
-# EP_f
-# EP_f <- update(EP_f, ZLNEPinterest ~ .)
-# 
-# options(scipen = 999)
-# ln_fit <- lmer(EP_f, data = df)
-# summary(ln_fit)
-# #> My function doesn't quite work on different model types
-# apa_lmer_model(Sex2_HPS, df, nice_names,
-#                bold_title = "Table 1",
-#                italics_title = "sex2init negative binomial",
-#                sig_level = FALSE,
-#                effects_to_bold = bold_effects
-# )
-
 
 
 #> Create APA Style Tables of Each Models Random Effects ------
@@ -993,7 +1001,7 @@ psa_re_tbls <- function(final_model_files, nice_names) {
 
 
 
-#> Simple Effects Analyses --------
+#> Simple Effects Analyses for Figure --------
 
 fmep <- readRDS("output/psa_data_appendix_output/ep_FINAL.rds")
 fmip <- readRDS("output/psa_data_appendix_output/ip_FINAL.rds")

@@ -9,6 +9,16 @@ rm(list = ls())
 
 df <- read.csv("data/input_data/daily_initial_full_dataset_april22_2025.csv")
 
+
+#> Creating an anonymized PROLIFIC_PID variable to allow for sharing of the data
+#> and script files. 
+
+# Because I am doing this anonymization after already having used "PROLIFIC_PID"
+# in many areas, I am going to re-write the original variable name with the anonymous
+#> variables so that I don't have to change every piece of code that references it. 
+#> I will create a duplicate of it so I can be sure that the variables function
+#> the same way. 
+
 #save a duplicate of the original variable. 
 df$PROLIFIC_PID1 <- df$PROLIFIC_PID
 
@@ -26,7 +36,7 @@ rm(pid_map)
 df$PROLIFIC_PID <- df$anon_pid
 
 
-#> This is the dataset which I (Ryan) cleaned in Python from the direct downloads
+#> This is the dataset which I cleaned in Python from the direct downloads
 #> of each daily survey. 
 #> The detailed cleaning log is available for the creation of that dataset. 
 menses <- read.csv("data/input_data/menses_onset_days_MERGE_may13_2025.csv")
@@ -359,7 +369,7 @@ df$menarche_tim <- rowMeans(df[, c("Zmenarche_age_trunc", "Zpubtim1")], na.rm = 
 
 df$physdev_tim <- rowMeans(df[, c("Zpubtim2", "Zpubtim3")], na.rm = TRUE)
 
-# Steve does not have explicit code for these but it must have been done 
+# No explicit SPSS code for these but it must have been done 
 df$Zphysdev_tim <- scale(df$physdev_tim)[, 1]
 df$Zmenarche_tim <- scale(df$menarche_tim)[ ,1]
 

@@ -54,7 +54,7 @@ source("script/analysis_scripts/part_sex_attract_model_list.R")
 #> NOTE: The below code was commented out after it was run. 
 
 # # #> Read in original dataframe before filtering to variables to share 
-# df <- readRDS("data/analysis_data/prolif_1_and_2_filtered.rds")
+df <- readRDS("data/analysis_data/prolif_1_and_2_filtered.rds")
 # # 
 # keep_variables <- c(
 # 
@@ -64,15 +64,13 @@ source("script/analysis_scripts/part_sex_attract_model_list.R")
 #   #code widely and it would have been a pain to update all of the code to make
 #   #that change. Thus, the solution was to overwrite this original variable name
 #   #with the anonymized version. The creation of the anonymized variable is documented
-#   #in the individual prolific 1 and prolific 2 files. 
+#   #in the individual prolific 1 and prolific 2 files.
 #   "study",
 #   "Zstudy",
 #   "studyday",
 # 
 #   # Menstrual / cycle variables
 #   "menses",
-#   "menses_lastentry",
-#   "menses_lastentrydate_1",
 # 
 #   # Sexual behavior outcomes
 #   "sex1",
@@ -96,25 +94,25 @@ source("script/analysis_scripts/part_sex_attract_model_list.R")
 #   "EPattract",
 #   "ZEPinterest",
 #   "ZEPattract",
-#   "Zsextoday", #scenario item 
+#   "Zsextoday", #scenario item
 # 
 #   #> In-pair items
 #   "IP2", "IP3",
 # 
 #   # In-pair outcomes (modeled + components)
-#   "IPinterest", 
+#   "IPinterest",
 #   "IPattract",
 #   "ZIPinterest",
 #   "ZIPattract",
 # 
 #   # Probability of conception
-#   "prc_stirn_bc", #backward count 
-#   "prc_stirn_bctypical", #backward count typical day 
-#   "prc_stirn_fc", #forward count 
-#   "prc_stirn", #coalesced backward and forward count 
-#   "prc_stirn_mean", #between-woman variance 
-#   "prc_stirn_ww", #within-woman variance 
-#   "Zprc_stirn",  #Z-scored prc_stirn 
+#   "prc_stirn_bc", #backward count
+#   "prc_stirn_bctypical", #backward count typical day
+#   "prc_stirn_fc", #forward count
+#   "prc_stirn", #coalesced backward and forward count
+#   "prc_stirn_mean", #between-woman variance
+#   "prc_stirn_ww", #within-woman variance
+#   "Zprc_stirn",  #Z-scored prc_stirn
 #   "Zprc_stirn_ww", #Z-scored prc_stirn_ww
 #   "Zprc_stirn_mean", #Z-scored prc_stirn_mean
 # 
@@ -137,7 +135,7 @@ source("script/analysis_scripts/part_sex_attract_model_list.R")
 #   "prog_mean",
 #   "Zprog_ww",
 #   "Zprog_mean",
-#   
+# 
 #   # Hormones (raw)
 #   "rawestr",
 #   "rawprog",
@@ -155,12 +153,12 @@ source("script/analysis_scripts/part_sex_attract_model_list.R")
 #   "s_sexattract", #self sexual attractiveness
 #   "Zp_sexattract",
 #   "Zs_sexattract",
-#   "Zp_sexattract_p1", #centered at "plus 1" standard deviation from mean 
-#   "Zp_sexattract_m1", #centered at "minus 1" standard deviation below mean 
-#    
-#   #> 3 items for partner sexual attractiveness composite 
+#   "Zp_sexattract_p1", #centered at "plus 1" standard deviation from mean
+#   "Zp_sexattract_m1", #centered at "minus 1" standard deviation below mean
+# 
+#   #> 3 items for partner sexual attractiveness composite
 #   "pattract1", "pattract2", "pattract3",
-#   #> 3 items for self sexual attractiveness composite 
+#   #> 3 items for self sexual attractiveness composite
 #   "sattract1", "sattract2", "sattract3"
 # 
 # 
@@ -178,7 +176,6 @@ source("script/analysis_scripts/part_sex_attract_model_list.R")
 # 
 # save_df <- df[, keep_variables]
 # 
-# 
 # # Save as CSV file
 # write.csv(save_df, file = "data/analysis_data/prolif_1_and_2_psa.csv", row.names = FALSE)
 # 
@@ -193,7 +190,7 @@ source("script/analysis_scripts/part_sex_attract_model_list.R")
 
 #> Load open-sharing data file ----------
 
-df <- readRDS("data/analysis_data/prolif_1_and_2_psa.rds")
+#df <- readRDS("data/analysis_data/prolif_1_and_2_psa.rds")
 
 
 df_study1 <- df[df$study == "Study 1", ]  
@@ -257,6 +254,8 @@ daily_scales <- list(
   EPsex = "sextoday",
   EPattract = c("EP1", "EP2"),
   EPinterest = c("ZEPattract", "Zsextoday"),
+  EPinterest1 = "EPinterest",
+  EPinterest2 = c("Zsextoday", "EP1", "EP2"),
   IPinit = "sex2init",
   IPattract = c("IP2", "IP3"),
   IPinterest = c("ZIPattract", "Zsex2init"),
@@ -350,26 +349,26 @@ survey_completion_fig
 
 
 #one partipant accidentaly marked their age as "2". Given they passed prolific
-#check, I'm sure that was not purposeful and 
+#check, I'm sure that was not purposeful and it can just be removed. 
 dfp[dfp$age_1 < 18, "age_1"] 
 dfp[dfp$age_1 < 18, "age_1"] <- NA
 #also removing that in the full sample for tests of age 
 df[df$age_1 < 18, "age_1"] <- NA
 
-#Relationship length 
-describe(dfp$rellength)
-
-#> Yes/no children 
-table(dfp$children)
-
-#> Yes/no cohabiting 
-dfp$livepart
-table(dfp$livepart)
-
-
-#> Yes/no children with current partner
-dfp$children_current
-table(dfp$children_current)
+# #Relationship length 
+# describe(dfp$rellength)
+# 
+# #> Yes/no children 
+# table(dfp$children)
+# 
+# #> Yes/no cohabiting 
+# dfp$livepart
+# table(dfp$livepart)
+# 
+# 
+# #> Yes/no children with current partner
+# dfp$children_current
+# table(dfp$children_current)
 
 
 
@@ -379,10 +378,8 @@ table(dfp$children_current)
 # tidy_t.test("age_1 ~ study", data = dfp, nice_names)
 
 
-dfp$p_sexattract
 des_table <- combine_tidy_tests(data = dfp,
-                   t_formulas = c("age_1 ~ study", "rellength ~ study",
-                                  "p_sexattract ~ study", "s_sexattract ~ study"), 
+                   t_formulas = c("age_1 ~ study", "rellength ~ study"), 
                    p_formulas = c("livepart ~ study", "children ~ study", "children_current ~ study"),
                    nice_names = nice_names)
 
@@ -420,22 +417,31 @@ dfp |>
 psych::describe(dfp$p_sexattract)
 
 
-#> Reliability of change or generalizability of within-person variations 
-df2 <- df |> 
-  group_by(PROLIFIC_PID) |> 
-  # keep those with any within-person variance on at least one item
-  filter(
-    sd(EP1, na.rm = TRUE) > 0 |
-    sd(EP2, na.rm = TRUE) > 0 |
-    sd(sextoday, na.rm = TRUE) > 0
+dfs <- df |> group_by(PROLIFIC_PID) |> 
+  mutate(
+    sd_EPinterest = sd(EPinterest, na.rm = TRUE),
+    sd_EPattract  = sd(EPattract,  na.rm = TRUE),
+    sd_sextoday   = sd(sextoday,   na.rm = TRUE)
   ) |> 
   ungroup()
 
 
+dfs[!duplicated(dfs$PROLIFIC_PID) & dfs$sd_sextoday != 0, ]
+187/484 #only 39% of the sample has variance on sextoday 
 
-# mlr_results <- run_my_mlr(df, grp = "PROLIFIC_PID", daily_scales, "studyday")
-# mlr_summary <- run_tidy_mlr(mlr_results)
-# mlr_summary
+dfs[!duplicated(dfs$PROLIFIC_PID) & dfs$sd_EPattract != 0, ]
+286/484 #59% of the sample has variance on extra-pair attraction 
+
+dfs[!duplicated(dfs$PROLIFIC_PID) & dfs$sd_EPinterest != 0, ]
+316/484 #65% of the sample has variance on the composite of extra-pair interest 
+
+
+mlr_results <- run_my_mlr(df, grp = "PROLIFIC_PID", daily_scales, "studyday",
+                          lmer = TRUE, aov = FALSE)
+
+mlr_results
+mlr_summary <- run_tidy_mlr(mlr_results)
+mlr_summary
 
 #write.csv(mlr_summary, paste0(data_appendix_directory, "mlr_summary.csv"))
 

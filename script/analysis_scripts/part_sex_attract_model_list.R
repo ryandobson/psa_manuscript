@@ -75,6 +75,61 @@ mdls <- list(
     dependent_variable = "ZEPinterest"
   ), #end of model 
   
+  
+  #> Model 
+  EP_PRCPSMSyBMI = list(
+    name = "Primary preregistered Probability of Conception model restricting 
+    sample to participants with a BMI between 18 and 35",
+    data = "df_bmi",
+    fixed_effects =
+      c("menses", "Zstudy", "Zprc_stirn_ww", "Zprc_stirn_mean",
+        "Zs_sexattract", "Zp_sexattract",
+        "Zs_sexattract : Zprc_stirn_ww",
+        "Zs_sexattract : Zprc_stirn_mean",
+        "Zp_sexattract : Zprc_stirn_ww",
+        "Zp_sexattract : Zprc_stirn_mean",
+        "menses : Zs_sexattract", "menses : Zp_sexattract",
+        "Zstudy : menses", "Zstudy : Zprc_stirn_ww", 
+        "Zstudy : Zprc_stirn_mean",
+        "Zstudy : Zs_sexattract", "Zstudy : Zp_sexattract", 
+        "Zstudy : Zs_sexattract : Zprc_stirn_ww",
+        "Zstudy : Zs_sexattract : Zprc_stirn_mean",
+        "Zstudy : Zp_sexattract : Zprc_stirn_ww",
+        "Zstudy : Zp_sexattract : Zprc_stirn_mean",
+        "Zstudy : menses : Zs_sexattract", "Zstudy : menses : Zp_sexattract"),
+    random_effects = c(1, "Zprc_stirn_ww"),
+    grouping_variable = "PROLIFIC_PID",
+    dependent_variable = "ZEPinterest"
+  ), #end of model 
+  
+  #Model  
+  EP_HPSMSyBMI = list(
+    name = "Primary preregistered estradiol and progesterone model restricting 
+    sample to participants with a BMI between 18 and 35",
+    data = "df_bmi",
+    fixed_effects = 
+      c("menses", "Zstudy", "Zestr_ww", "Zprog_ww", "Zestr_mean", "Zprog_mean",
+        "Zs_sexattract", "Zp_sexattract",
+        "Zs_sexattract : Zprog_ww", "Zs_sexattract : Zestr_ww",
+        "Zs_sexattract : Zprog_mean", "Zs_sexattract : Zestr_mean",
+        "Zp_sexattract : Zprog_ww", "Zp_sexattract : Zestr_ww",
+        "Zp_sexattract : Zprog_mean", "Zp_sexattract : Zestr_mean",
+        "menses : Zs_sexattract", "menses : Zp_sexattract",
+        "Zstudy : menses", "Zstudy : Zestr_ww", "Zstudy : Zprog_ww",
+        "Zstudy : Zestr_mean", "Zstudy : Zprog_mean",
+        "Zstudy : Zs_sexattract", "Zstudy : Zp_sexattract", 
+        "Zstudy : Zs_sexattract : Zprog_ww", "Zstudy : Zs_sexattract : Zestr_ww",
+        "Zstudy : Zs_sexattract : Zprog_mean", "Zstudy : Zs_sexattract :
+   Zestr_mean",
+        "Zstudy : Zp_sexattract : Zprog_ww", "Zstudy : Zp_sexattract : Zestr_ww",
+        "Zstudy : Zp_sexattract : Zprog_mean", "Zstudy : Zp_sexattract :
+   Zestr_mean",
+        "Zstudy : menses : Zs_sexattract", "Zstudy : menses : Zp_sexattract"),
+    random_effects = c(1, "Zestr_ww", "Zprog_ww"),
+    grouping_variable = "PROLIFIC_PID",
+    dependent_variable = "ZEPinterest"
+  ), #end of model 
+  
 
 #> Version 2: Removing only study terms from the primary preregistered models 
 
@@ -1160,6 +1215,10 @@ extras <- list(
 
 # core models 
 ep <- names(mdls)
+
+#bmi filter models 
+ep_bmi <- names(mdls[grepl(pattern = "EP.*BMI", x = names(mdls))])
+
 
 # extra-pair attraction models 
 ea <- names(EAmdls)

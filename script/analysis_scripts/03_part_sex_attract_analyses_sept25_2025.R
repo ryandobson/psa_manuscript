@@ -43,7 +43,7 @@ library(ggeffects) #for simple effects graphs
 library(patchwork) #for pulling together forest plots as desired 
 
 #load in the functions
-source("script/processing_scripts/helper_functions.R")
+source("../../collab_chest/helper_functions.R")
 
 #load in model list that specifies all of the models
 source("script/analysis_scripts/part_sex_attract_model_list.R")
@@ -55,6 +55,12 @@ source("script/analysis_scripts/part_sex_attract_model_list.R")
 
 # # #> Read in original dataframe before filtering to variables to share 
 df <- readRDS("data/analysis_data/prolif_1_and_2_filtered.rds")
+
+cor(df$IPinterest, df$p_lovattach_scale, use = "complete")
+cor(df$IPinterest, df$s_lovattach_scale, use = "complete")
+
+
+
 # # 
 # keep_variables <- c(
 # 
@@ -197,6 +203,9 @@ df_study1 <- df[df$study == "Study 1", ]
 df_study2 <- df[df$study == "Study 2", ] 
 #creating a df where there is 1 row for each participant for some analyses 
 dfp <- df[!duplicated(df$PROLIFIC_PID), ]
+
+df_bmi <- df |> filter(BMI_trimmed >= 18 & BMI_trimmed <= 35)
+
 
 
 
@@ -377,13 +386,15 @@ df[df$age_1 < 18, "age_1"] <- NA
 # 
 # tidy_t.test("age_1 ~ study", data = dfp, nice_names)
 
+#> NOTE: 6/16/26 -- Getting an error on rerunning this. Need to debug the 
+#> combine_tidy_tests function. 
+# des_table <- combine_tidy_tests(data = dfp,
+#                    t_formulas = c("age_1 ~ study", "rellength ~ study"), 
+#                    p_formulas = c("livepart ~ study", "children ~ study", "children_current ~ study"),
+#                    nice_names = nice_names)
+# 
+# des_table
 
-des_table <- combine_tidy_tests(data = dfp,
-                   t_formulas = c("age_1 ~ study", "rellength ~ study"), 
-                   p_formulas = c("livepart ~ study", "children ~ study", "children_current ~ study"),
-                   nice_names = nice_names)
-
-des_table
 
 # write.csv(des_table, paste0(results_directory, "psa_descriptive_table1.csv"))
 
@@ -436,12 +447,12 @@ dfs[!duplicated(dfs$PROLIFIC_PID) & dfs$sd_EPinterest != 0, ]
 316/484 #65% of the sample has variance on the composite of extra-pair interest 
 
 
-mlr_results <- run_my_mlr(df, grp = "PROLIFIC_PID", daily_scales, "studyday",
-                          lmer = TRUE, aov = FALSE)
-
-mlr_results
-mlr_summary <- run_tidy_mlr(mlr_results)
-mlr_summary
+#> Just load in the csv file after saving results to not waste time rerunning this. 
+# mlr_results <- run_my_mlr(df, grp = "PROLIFIC_PID", daily_scales, "studyday")
+# 
+# mlr_results
+# mlr_summary <- run_tidy_mlr(mlr_results)
+# mlr_summary
 
 #write.csv(mlr_summary, paste0(data_appendix_directory, "mlr_summary.csv"))
 
@@ -462,6 +473,7 @@ model_environment <- new.env(parent = globalenv())
 df$children1 <- as.factor(df$children)
 contrasts(df$children1) <- contr.sum(2) / 2
 contrasts(df$children1)
+
 
 model_sets <- c("ep", "ea", "sc", "ip", "ex")
 
@@ -548,6 +560,8 @@ for(i in seq_along(model_sets)) {
 
 #psa_analysis(mdls, model_sets[4])
 
+psa_analysis(mdls, model_sets[1])
+
 #> Load in final saved models 
 
 
@@ -564,8 +578,8 @@ for(i in seq_along(model_sets)) {
 # msc <- readRDS("output/data_appendix_output/sc_FULL.rds")
 # fmsc <- readRDS("output/data_appendix_output/sc_FINAL.rds")
 # 
-mip <- readRDS("output/psa_data_appendix_output/ip_FULL.rds")
-fmip <- readRDS("output/psa_data_appendix_output/ip_FINAL.rds")
+# mip <- readRDS("output/psa_data_appendix_output/ip_FULL.rds")
+# fmip <- readRDS("output/psa_data_appendix_output/ip_FINAL.rds")
 # 
 # mex <- readRDS("output/data_appendix_output/ex_FULL.rds")
 # fmex <- readRDS("output/data_appendix_output/ex_FINAL.rds")
@@ -614,7 +628,9 @@ fmip <- readRDS("output/psa_data_appendix_output/ip_FINAL.rds")
 full_model_files <- c("output/psa_data_appendix_output/ep_FULL.rds",
                       "output/psa_data_appendix_output/ea_FULL.rds",
                       "output/psa_data_appendix_output/sc_FULL.rds",
-                      "output/psa_data_appendix_output/ip_FULL.rds")
+                      "output/psa_data_appendix_output/ip_FULL.rds"
+                      #"output/psa_data_appendix_output/ep_bmi_FULL.rds"
+                      )
 
 
 psa_reports <- function(full_model_files) {
@@ -675,6 +691,8 @@ for(i in seq_along(full_model_files)) {
 
 #psa_reports(full_model_files[4])
 
+psa_reports(full_model_files[1])
+
 #> SINGLE MODEL REPORT ON A SET EXAMPLE
 
 # cm <- run_apa_mlm_report(cm,
@@ -718,23 +736,25 @@ bold_effects <- c("Partner Sexual Attract. * Probability of Conception (WW)",
 
 
 
-final_model_files1 <- c("output/data_appendix_output/ep_FINAL.rds",
-                       "output/data_appendix_output/ea_FINAL.rds",
-                       "output/data_appendix_output/sc_FINAL.rds"
-                       #"output/data_appendix_output/ip_FINAL.rds"
+final_model_files1 <- c("output/psa_data_appendix_output/ep_FINAL.rds",
+                       "output/psa_data_appendix_output/ea_FINAL.rds",
+                       "output/psa_data_appendix_output/sc_FINAL.rds"
+                       #"output/psa_data_appendix_output/ip_FINAL.rds"
+                       #"output/psa_data_appendix_output/ep_bmi_FINAL.rds"
                        )
 
 
 supplemental_sections1 <- list(
   section_1 = c("EP_PRCPSMSy", "EP_HPSMSy"), #full models 
-  section_2 = c("EP_PRCPSM", "EP_HPSM"), #remove study 
-  section_3 = c("EP_PRCPSSy", "EP_HPSSy"), #remove between-woman 
-  section_4 = c("EP_PRCPS", "EP_HPS"), #remove study and between-woman 
-  section_5 = c("EP_PRCPSMs1", "EP_HPSMs1", #separate study 1 and study 2 models 
+  section_2 = c("EP_PRCPSMSyBMI", "EP_HPSMSyBMI"), #full models w/extreme BMI's removed 
+  section_3 = c("EP_PRCPSM", "EP_HPSM"), #remove study 
+  section_4 = c("EP_PRCPSSy", "EP_HPSSy"), #remove between-woman 
+  section_5 = c("EP_PRCPS", "EP_HPS"), #remove study and between-woman 
+  section_6 = c("EP_PRCPSMs1", "EP_HPSMs1", #separate study 1 and study 2 models 
                  "EP_PRCPSMs2", "EP_HPSMs2"),
-  section_6 = c("EP_PRCPMSy", "EP_HPMSy"), #remove self
-  section_7 = c("EP_PRCP", "EP_HP"), #basic model
-  section_8 = c("EP_RHPSMSy") #raw hormone analysis with full models 
+  section_7 = c("EP_PRCPMSy", "EP_HPMSy"), #remove self
+  section_8 = c("EP_PRCP", "EP_HP"), #basic model
+  section_9 = c("EP_RHPSMSy") #raw hormone analysis with full models 
 )
 supplemental_sections1
 
@@ -857,7 +877,7 @@ psa_lmer_tbls <- function(final_model_files, bold_effects, supplemental_sections
   
 } #End of function
 
-#psa_lmer_tbls(final_model_files1, bold_effects, supplemental_sections1, som_numbers1)
+#psa_lmer_tbls(final_model_files1[1], bold_effects, supplemental_sections1, som_numbers1)
 
 #> I can reuse this function, but I am just going to create a single set of models 
 #> so I'll just set the supplemental sections to 1. 
@@ -867,6 +887,7 @@ supplemental_sections2 <- list(
 
 )
 supplemental_sections2
+
 
 
 
@@ -905,11 +926,11 @@ supplemental_sections2
 #> Create APA Style Tables of Each Models Random Effects ------
 
 
-final_model_files <- c("output/psa_data_appendix_output/ep_FINAL.rds",
-                       "output/psa_data_appendix_output/ea_FINAL.rds",
-                       "output/psa_data_appendix_output/sc_FINAL.rds",
-                       "output/psa_data_appendix_output/ip_FINAL.rds"
-) 
+# final_model_files <- c("output/psa_data_appendix_output/ep_FINAL.rds",
+#                        "output/psa_data_appendix_output/ea_FINAL.rds",
+#                        "output/psa_data_appendix_output/sc_FINAL.rds",
+#                        "output/psa_data_appendix_output/ip_FINAL.rds"
+# ) 
 
 psa_re_tbls <- function(final_model_files, nice_names) {
   
@@ -969,6 +990,9 @@ psa_re_tbls <- function(final_model_files, nice_names) {
 } #end of function
 
 #psa_re_tbls(final_model_files[4], nice_names)
+
+#psa_re_tbls(final_model_files1[1], nice_names)
+
 
 
 # cfm <- run_apa_lmer_random(cfm, model_path = "post_mlm_comp_and_fed_model",
@@ -1207,13 +1231,13 @@ fmip <- readRDS("output/psa_data_appendix_output/ip_FINAL.rds")
  
 fmdls <- c(fmep, fmea, fmsc, fmip) 
 rm(list = ls()[grepl("fm[a-z]{2}$", ls())])
-#fmdls <- rename_lmers(fmdls, nice_names, df, model_path = "post_mlm_comp_and_fed_model")
-
-
+# fmdls <- rename_lmers(fmdls, nice_names, df, model_path = "post_mlm_comp_and_fed_model")
+# 
+# 
 # tidy_tbl <- bind_tidy_tbls(fmdls)
 # as_tibble(tidy_tbl)
 # #save the model output to a csv file:
-# write.csv(tidy_tbl, paste0(results_directory, "df_lmer_model_coefficients.csv"), row.names = FALSE)
+#write.csv(tidy_tbl, paste0(results_directory, "df_lmer_model_coefficients.csv"), row.names = FALSE)
 
 tidy_tbl <- read_csv(paste0(results_directory, "df_lmer_model_coefficients.csv"))
 
@@ -1227,6 +1251,7 @@ var4 <- "Raw Estradiol (WW) * Partner Sexual Attract."
 var5 <- "Raw Progesterone (WW) * Partner Sexual Attract."
 
 order_vec <- c("EP_PRCPSMSy", #full model  
+               "EP_PRCPSMSyBMI", #full model filtering on BMI
                "EP_PRCPSM", "EP_PRCPSSy", #dropping study/mean
                "EP_PRCPS", #dropping study and mean 
                "EP_PRCPSMs1", "EP_PRCPSMs2", #by study 
@@ -1235,6 +1260,7 @@ order_vec <- c("EP_PRCPSMSy", #full model
                "EP_BLANK", #placeholder to get even spacing 
                
                "EP_HPSMSy", #full model 
+               "EP_HPSMSyBMI", #full model with BMI filtering
                "EP_HPSM", "EP_HPSSy", #dropping study/mean 
                "EP_HPS", #droping study and mean 
                "EP_HPSMs1", "EP_HPSMs2", #by study 
@@ -1501,8 +1527,6 @@ fps2[[4]]
 # 
 # filename <- paste0(results_directory, "psa_ip_fp1", ".png")
 # ggsave(filename, fps2[[4]], width = 13, height = 7)
-
-
 
 
 #> Collecting Simple Effects -------

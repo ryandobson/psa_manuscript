@@ -325,10 +325,15 @@ df[df$study == 2, "s_lovattach_scale"]
 df[df$study == 1, "s_lovattachSHORT"]
 df[df$study == 2, "s_lovattachSHORT"]
 
-
+sex_variables <- c("IP1", "IPattract", "IPinterest", "EPattract",
+                   "EPinterest", "IPvEPinterest", "sextoday", "sex1", "sex2init",
+                   "sex3Pinit", "sex4reject")
+sex_variables
 # Variables to create mlm person-mean and within-person variables for  
 mlm_variables <- c("prog", "estr", "prc_stirn", "Echg", "Pchg",
-                   "rawestr", "rawprog" #added 10/28/25
+                   "rawestr", "rawprog", #added 10/28/25
+                   sex_variables, #added for eating sex analyses 
+                   "energy", "neg_affect" #added for eating sex analysis controls
                    )
 
 #This function allows me to create all of the variables for each dataframe. I can 
@@ -550,6 +555,11 @@ dfs <- lapply(dfs, function(x)
   #create simple effects analysis variables 
   x$Zp_sexattract_p1 <- x$Zp_sexattract + 1 #adding 1 makes the 0 point 1 SD below the mean 
   x$Zp_sexattract_m1 <- x$Zp_sexattract - 1 #subtracting 1 makes the 0 point 1 SD above the mean
+  x$ZestrxZprog      <- x$Zestr * x$Zprog
+  
+  #create Z-scored energy and negative affect 
+  x$Zenergy          <- scale(x$energy)[, 1]
+  x$Zneg_affect      <- scale(x$neg_affect)[, 1]
   
   #ADD MORE CALLS HERE THAT NEED TO BE DONE TO BOTH DFS
   
